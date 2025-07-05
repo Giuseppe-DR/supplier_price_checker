@@ -2,43 +2,43 @@ def parse_supplier_grid_style(lines):
     items = []
     i = 0
     while i < len(lines) - 1:
-        # Row 1: Code + Description
+        # Row 1 are formatted like this [Cod.Articolo, Descrizione]
+        # Row 2 are formatted like this [Cod.Fornitore, PZ, Prezzo, ContCfz, Strato, Pallet]
         row1 = lines[i].strip().split()
-
+        row1 = row1[:-1]  # Remove Codice a barre
+        print("row1: ",row1)
         # Row 2: U.M + Quantities + Price + Codice a barre (last)
         row2 = lines[i + 1].strip().split()
-
-        # Remove last column if present (Codice a barre)
-        if len(row2) > 9:
-            row2 = row2[:9]  # keep only columns A–I (indices 0–8)
-
+        row2 = row2[:-1]
+        print("row2: ",row2)
         # Skip malformed lines
-        if len(row1) < 2 or len(row2) < 5:
+        if len(row1) <= 1 or len(row2) <= 1:
             i += 1
             continue
 
         try:
             # === From Row 1 ===
-            code = row1[0]                      # Column A
-            description = " ".join(row1[1:])    # Columns B–D
+            articleCode = row1[0]
+            description = " ".join(row1[1:])
 
             # === From Row 2 ===
-            unit = row2[0]                      # Column B
-            print(row2[4])
-            price = float(row2[4])              # Column E (Prezzo Netto)
+            supplyerCode = row2[0]
+            price = float(row2[2])
+            contCfz = row2[3]
+
 
         except ValueError:
             price = None
 
         item = {
             "supplier": "CEDI",
-            "code": code,
+            "articleCode": articleCode,
             "description": description,
-            "unit": unit,
-            "price": price
+            "supplyerCode": supplyerCode,
+            "price": price,
+            "contCfz": contCfz
         }
 
         items.append(item)
         i += 2
-
     return items

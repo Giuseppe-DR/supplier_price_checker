@@ -16,5 +16,5 @@ def convert_pdf_to_csv(pdf_path: str, output_dir: str = "data/converted_csv", pa
         pages=pages,
         lattice=True  # lattice=True works well with grid-style PDFs
     )
-
+    print(f"✅ CSV created at: {output_csv_path}")
     return output_csv_path

@@ -3,8 +3,6 @@ import os
 
 def filter_csv_by_keywords(input_path, output_path):
 
-    skip_keywords = ["Promo", "Articolo","Descrizione","Lista","Brand", "Prezzo"]
-
     # Ensure parent folder exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
@@ -15,11 +13,6 @@ def filter_csv_by_keywords(input_path, output_path):
         for row in reader:
             if not any(row):
                 continue
-
-            row_text = " ".join(row).lower()
-            if any(kw.lower() in row_text for kw in skip_keywords):
-                continue
-
 
             if len(row) == 1:
                 continue

@@ -37,3 +37,19 @@ def insert_items(items: list[ItemDTO], db_path: str = "data/items.db"):
     conn.commit()
     conn.close()
     print(f"✅ Inserted {len(items)} items into {db_path}")
+
+def search_items_by_name(query: str, db_path: str = "data/items.db") -> list[ItemDTO]:
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT supplier, articleCode, supplierCode, description, price
+        FROM items
+        WHERE articleCode LIKE ? OR description LIKE ?
+        ORDER BY price ASC
+    ''', (f'%{query}%', f'%{query}%'))
+
+    rows = cursor.fetchall()
+    conn.close()
+
+    return [ItemDTO(*row) for row in rows]

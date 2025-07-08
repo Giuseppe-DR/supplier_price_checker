@@ -30,7 +30,7 @@ def insert_items(items: list[ItemDTO], db_path: str = "data/items.db"):
 
     cursor.executemany('''
         INSERT OR IGNORE INTO items 
-        (supplier, articleCode, supplierCode, description, price)
+        (supplier, articleCode, supplierCode, description, price )
         VALUES (?, ?, ?, ?, ?)
     ''', values)
 

@@ -19,7 +19,8 @@ def parse_row_pair_csv(csv_path: str, supplier: str) -> list[ItemDTO]:
             supplierCode = row2[0].strip()
             description = row1[1].strip()
             price_str = row2[2].replace(",", ".").strip()
-
+            cont_cfz_str = row2[3].strip()
+            print(cont_cfz_str)
 
             try:
                 price = float(price_str)
@@ -34,5 +35,5 @@ def parse_row_pair_csv(csv_path: str, supplier: str) -> list[ItemDTO]:
                 price = price
             )
             items.append(item)
-
+    print("parser",items)
     return items

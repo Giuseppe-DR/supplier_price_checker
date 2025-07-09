@@ -2,11 +2,8 @@ from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton,
     QTableWidget, QTableWidgetItem, QLabel, QFileDialog, QMessageBox, QComboBox
 )
-from db.sqlite_utils import search_items_by_name, insert_items, create_database
-from parsers.cedi_parser import parse_row_pair_csv  # Adjust if different
-from models.item_dto import ItemDTO
-from utils.clean_csv import filter_csv_by_keywords
-from utils.pdf_to_csv import convert_pdf_to_csv
+from db.sqlite_utils import search_items_by_name, insert_items
+from utils.cedi_input_file import insert_cedi_file
 
 
 class MainWindow(QWidget):
@@ -53,9 +50,9 @@ class MainWindow(QWidget):
 
         # ===================== Table ==========================
         self.table = QTableWidget()
-        self.table.setColumnCount(6)
+        self.table.setColumnCount(9)
         self.table.setHorizontalHeaderLabels([
-            "Fornitore", "Codice Articolo", "Codice Fornitore", "Descrizione", "Price (€)","Confezioni"
+            "Fornitore", "Codice Articolo", "Codice Fornitore","Ean", "Descrizione", "Price (€)", "Netto", "Ivato", "Confezioni"
         ])
         self.table.setSortingEnabled(True)
 
@@ -76,11 +73,7 @@ class MainWindow(QWidget):
 
         try:
             if supplier == "CEDI":
-                output_csv_path = convert_pdf_to_csv(self.csv_path)
-                filter_csv_by_keywords(output_csv_path, output_csv_path)
-                items = parse_row_pair_csv(output_csv_path, supplier)
-                print(len(items))
-                create_database("data/items.db")
+                items = insert_cedi_file(self.csv_path, supplier)
 
             insert_items(items)
             QMessageBox.information(self, "Success", f"✅ Inserted {len(items)} items for {supplier}.")
@@ -91,16 +84,18 @@ class MainWindow(QWidget):
     def search_items(self):
         query = self.search_input.text()
         results = search_items_by_name(query)
-
         self.table.setRowCount(len(results))
-
         for row, item in enumerate(results):
             self.table.setItem(row, 0, QTableWidgetItem(item.supplier))
             self.table.setItem(row, 1, QTableWidgetItem(item.articleCode))
             self.table.setItem(row, 2, QTableWidgetItem(item.supplierCode))
-            self.table.setItem(row, 3, QTableWidgetItem(item.description))
-            self.table.setItem(row, 4, QTableWidgetItem(item.quantity))
-            self.table.setItem(row, 5, QTableWidgetItem(f"{item.price:.4f}"))
+            self.table.setItem(row, 3, QTableWidgetItem(item.ean) or "")
+            self.table.setItem(row, 4, QTableWidgetItem(item.description))
+            self.table.setItem(row, 5, QTableWidgetItem(str(item.quantity)))
+            self.table.setItem(row, 6, QTableWidgetItem(f"{item.price:.4f}") or 0.0)
+            self.table.setItem(row, 7, QTableWidgetItem(f"{item.netto:.4f}") or 0.0)
+            self.table.setItem(row, 8, QTableWidgetItem(f"{item.ivato:.4f}") or 0.0)
+
 
     def choose_file(self):
         supplier = self.supplier_dropdown.currentText()

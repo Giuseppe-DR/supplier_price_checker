@@ -2,7 +2,7 @@ import csv
 from models.item_dto import ItemDTO
 
 
-def parse_row_pair_csv(csv_path: str, supplier: str) -> list[ItemDTO]:
+def parse_row_pair_csv(csv_path: str) -> list[ItemDTO]:
     items = []
 
     with open(csv_path, newline='', encoding='utf-8') as csvfile:
@@ -28,7 +28,7 @@ def parse_row_pair_csv(csv_path: str, supplier: str) -> list[ItemDTO]:
                 continue  # Skip malformed rows
 
             item = ItemDTO(
-                supplier = supplier,
+                supplier = "CEDI",
                 articleCode = article_code,
                 supplierCode =supplier_code,
                 description = description,

@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import (
     QTableWidget, QTableWidgetItem, QLabel, QFileDialog, QMessageBox, QComboBox
 )
 from db.sqlite_utils import search_items_by_name, insert_items
+from utils import db_to_excel
 from utils.cedi_input_file import insert_cedi_file
 
 
@@ -10,14 +11,13 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("📦 Supplier Price Manager")
-        self.resize(950, 600)
+        self.resize(1000, 600)
 
         layout = QVBoxLayout()
         self.supplier_file_types = {
             "CEDI": "PDF Files (*.pdf)",
-            "Surgelati Rossi": "Excel Files (*.xlsx)",
-            "Distribuzione Italiana": "CSV Files (*.csv)",
-            "Cash & Carry Luigi": "CSV Files (*.csv)"
+            "IngroMarket": "Excel Files (*.xls)",
+            "Pilato": "Excel Files (*.xls)"
         }
 
         # ===================== File Loader Area ==========================
@@ -25,9 +25,9 @@ class MainWindow(QWidget):
 
         self.file_label = QLabel("No file selected")
         self.supplier_dropdown = QComboBox()
-        self.supplier_dropdown.addItems(["CEDI", "SupplierB", "SupplierC", "SupplierD"])
+        self.supplier_dropdown.addItems(["CEDI", "IngroMarket", "Pilato", "Petrillo"])
 
-        self.browse_button = QPushButton("📂 Choose CSV File")
+        self.browse_button = QPushButton("📂 Choose File")
         self.browse_button.clicked.connect(self.choose_file)
 
         self.load_button = QPushButton("🚀 Load & Insert Items")
@@ -74,8 +74,17 @@ class MainWindow(QWidget):
         try:
             if supplier == "CEDI":
                 items = insert_cedi_file(self.csv_path, supplier)
+            """elif supplier == "IngroMarket":
+                items = insert_ingromarket_file(self.csv_path, supplier)
+            elif supplier == "Pilato":
+                items = insert_pilato_file(self.csv_path, supplier)
+            else:
+                items = insert_petrillo_file(self.csv_path, supplier)
+            """
 
             insert_items(items)
+            db_to_excel("data/items.db", "items", "data/converted_csv/cedi_items.xlsx")
+
             QMessageBox.information(self, "Success", f"✅ Inserted {len(items)} items for {supplier}.")
 
         except Exception as e:

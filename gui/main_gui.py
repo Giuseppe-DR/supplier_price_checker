@@ -1,6 +1,7 @@
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QPushButton, QLabel, QFileDialog, QMessageBox
+    QWidget, QVBoxLayout, QPushButton, QLabel, QFileDialog, QMessageBox, QApplication, QMainWindow
 )
+from PyQt6.QtGui import QIcon
 
 from db.sqlite_utils import insert_items
 from utils import db_to_excel
@@ -11,8 +12,8 @@ class SimpleWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Convertitore PDF -> Excel")
+        self.setWindowIcon(QIcon("icon2.ico"))
         self.resize(400, 200)
-
         layout = QVBoxLayout()
 
         self.pdf_path = None

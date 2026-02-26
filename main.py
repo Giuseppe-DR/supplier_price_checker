@@ -1,10 +1,11 @@
-from utils.pdf_reader import extract_text_lines
-from parsers.CediParser import parse_supplier_grid_style
+import sys
+from PyQt6.QtWidgets import QApplication
+from gui.main_gui import SimpleWindow
+from PyQt6.QtGui import QIcon
 
-pdf_path = "C:\\Users\\Giuseppe\\Desktop\\TryNullParam.pdf"  # Replace with your PDF path
-lines = extract_text_lines(pdf_path)
-for idx, line in enumerate(lines):
-    print(f"{idx:03}: {line}")
-items = parse_supplier_grid_style(lines)
-for item in items:
-    print(item)
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon("icon2.ico"))
+    window = SimpleWindow()
+    window.show()
+    sys.exit(app.exec())
